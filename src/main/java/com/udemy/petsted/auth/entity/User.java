@@ -11,6 +11,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @Table(name = "users")
@@ -18,6 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@ToString
 public class User {
 
     @Id
@@ -51,9 +55,11 @@ public class User {
     @Column(nullable = false)
     private Double manner;
 
-    @Column(nullable = false)
+    @Column
+    @CreatedDate
     private LocalDateTime createdDate;
 
-    @Column(nullable = false)
+    @Column
+    @LastModifiedDate
     private LocalDateTime updatedDate;
 }
