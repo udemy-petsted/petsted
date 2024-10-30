@@ -58,11 +58,11 @@ public class User {
     @Column(nullable = false)
     private Double manner;
 
-    @Column
+    @Column(nullable = false)
     @CreatedDate
     private LocalDateTime createdDate;
 
-    @Column
+    @Column(nullable = false)
     @LastModifiedDate
     private LocalDateTime updatedDate;
 }
