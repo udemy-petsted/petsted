@@ -1,5 +1,10 @@
 package com.udemy.petsted.users;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class UserEntity {
     public static class ApiResponse<T> {
         private String status;

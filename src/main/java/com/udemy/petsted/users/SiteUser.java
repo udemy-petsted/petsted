@@ -35,7 +35,7 @@ public class SiteUser {
 
     private String region;
 
-    private double manner;
+    private Double manner;
 
     private Date created_at;
     private Date updated_at;

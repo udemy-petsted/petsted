@@ -33,8 +33,8 @@ public class UserService {
         // 유저 정보 저장
         return userRepository.save(newUser);
     }
-    public SiteUser findUserById(long userId){
-        Optional<SiteUser> user = userRepository.findById(userId);
+    public SiteUser findByNickname(String nickname){
+        Optional<SiteUser> user = userRepository.findByNickname(nickname);
 
         return user.orElse(null);
     }

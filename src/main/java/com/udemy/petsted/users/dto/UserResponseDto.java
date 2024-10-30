@@ -3,7 +3,11 @@ package com.udemy.petsted.users.dto;
 import com.udemy.petsted.users.SiteUser;
 import jakarta.validation.constraints.NotBlank;
 import java.util.Date;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class UserResponseDto {
     private Long userId;
     private String nickname;

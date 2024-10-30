@@ -58,13 +58,12 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{user_id}")
-    public ResponseEntity<ApiResponse<UserResponseDto>> getUserById(
-        @PathVariable Long user_id,
-        @RequestHeader(value = "Authorization") String token,
+    @GetMapping("/{nickname}")
+    public ResponseEntity<ApiResponse<UserResponseDto>> getUserByNickname(
+        @PathVariable String nickname,
         @AuthenticationPrincipal UserDetails currentUser) {
         try {
-            SiteUser user = userService.findUserById(user_id);
+            SiteUser user = userService.findByNickname(nickname);
 
             if(user == null) {
                 ApiResponse<UserResponseDto> response = new ApiResponse<>(

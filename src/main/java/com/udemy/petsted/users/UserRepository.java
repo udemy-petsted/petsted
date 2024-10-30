@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends JpaRepository<SiteUser, Long> {
-    Optional<SiteUser> findById(Long id);
+    Optional<SiteUser> findByNickname(String nickname);
 }
 
