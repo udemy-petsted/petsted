@@ -39,6 +39,4 @@ public class SiteUser {
 
     private Date created_at;
     private Date updated_at;
-
-    //임시
 }

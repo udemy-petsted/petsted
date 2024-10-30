@@ -44,7 +44,7 @@ public class CommandLineRunner implements org.springframework.boot.CommandLineRu
         user2.setManner(4.8);
         userService.create(user2);
 
-        // 임시
+
     }
 }
 

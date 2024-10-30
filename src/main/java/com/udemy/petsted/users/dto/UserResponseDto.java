@@ -35,5 +35,4 @@ public class UserResponseDto {
             this.birthDate = user.getBirthDate();
         }
     }
-
 }

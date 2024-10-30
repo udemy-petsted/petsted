@@ -36,5 +36,4 @@ public class UserEntity {
             this.data = data;
         }
     }
-
 }

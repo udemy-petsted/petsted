@@ -22,4 +22,5 @@ public class UserCreateRequestDto {
     private String birthDate;
     private String region;
     private Double manner;
+
 }
