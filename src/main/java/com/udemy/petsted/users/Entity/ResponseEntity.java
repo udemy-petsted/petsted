@@ -1,11 +1,11 @@
-package com.udemy.petsted.users;
+package com.udemy.petsted.users.Entity;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class UserEntity {
+public class ResponseEntity {
     public static class ApiResponse<T> {
         private String status;
         private String message;

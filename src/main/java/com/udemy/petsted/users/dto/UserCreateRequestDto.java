@@ -1,11 +1,15 @@
 package com.udemy.petsted.users.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
+@Builder
 @Getter
-@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserCreateRequestDto {
     @NotBlank(message = "닉네임은 채워져있어야합니다.")
     private String nickname;

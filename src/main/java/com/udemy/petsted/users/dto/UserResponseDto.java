@@ -1,13 +1,12 @@
 package com.udemy.petsted.users.dto;
 
-import com.udemy.petsted.users.SiteUser;
-import jakarta.validation.constraints.NotBlank;
+import com.udemy.petsted.users.Entity.User;
 import java.util.Date;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
+@NoArgsConstructor
 public class UserResponseDto {
     private Long userId;
     private String nickname;
@@ -22,7 +21,7 @@ public class UserResponseDto {
     private Date createdAt;
     private Date updatedAt;
 
-    public UserResponseDto(SiteUser user, boolean isOwner) {
+    public UserResponseDto(User user, boolean isOwner) {
         this.userId = user.getUserId();
         this.nickname = user.getNickname();
         this.username = user.getUsername();

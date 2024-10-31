@@ -1,7 +1,9 @@
-package com.udemy.petsted.users;
+package com.udemy.petsted.users.Controller;
 
 
-import com.udemy.petsted.users.UserEntity.ApiResponse;
+import com.udemy.petsted.users.Entity.ResponseEntity.ApiResponse;
+import com.udemy.petsted.users.Entity.User;
+import com.udemy.petsted.users.Service.UserService;
 import com.udemy.petsted.users.dto.UserCreateRequestDto;
 import com.udemy.petsted.users.dto.UserResponseDto;
 import jakarta.validation.Valid;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,11 +38,11 @@ public class UserController {
     }
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<SiteUser>> createUser(@Valid @RequestBody UserCreateRequestDto requestDto){
+    public ResponseEntity<ApiResponse<User>> createUser(@Valid @RequestBody UserCreateRequestDto requestDto){
         try {
-            SiteUser newUser = userService.create(requestDto);
+            User newUser = userService.createUser(requestDto);
 
-            ApiResponse<SiteUser> response = new ApiResponse<>(
+            ApiResponse<User> response = new ApiResponse<>(
                 "success",
                 "User created successfully",
                 newUser
@@ -49,7 +50,7 @@ public class UserController {
 
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (DuplicateKeyException e) {
-            ApiResponse<SiteUser> response = new ApiResponse<>(
+            ApiResponse<User> response = new ApiResponse<>(
                 "error",
                 "아이디 또는 이메일이 이미 존재합니다.",
                 null
@@ -63,7 +64,7 @@ public class UserController {
         @PathVariable String nickname,
         @AuthenticationPrincipal UserDetails currentUser) {
         try {
-            SiteUser user = userService.findByNickname(nickname);
+            User user = userService.findByNickname(nickname);
 
             if(user == null) {
                 ApiResponse<UserResponseDto> response = new ApiResponse<>(

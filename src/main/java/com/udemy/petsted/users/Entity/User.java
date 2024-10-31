@@ -1,14 +1,21 @@
-package com.udemy.petsted.users;
+package com.udemy.petsted.users.Entity;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 @Getter
-@Setter
 @Entity
-public class SiteUser {
+@Table(name = "users")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
