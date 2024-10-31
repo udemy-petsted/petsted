@@ -69,5 +69,39 @@ public class User {
     @LastModifiedDate
     private LocalDateTime updatedDate;
 
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
+    public void changePassword(String password) {
+        this.password = password;
+    }
+
+    public void changeEmail(String email) {
+        this.email = email;
+    }
+
+    public void changeHasPet(Boolean hasPet) {
+        this.hasPet = hasPet;
+    }
+
+    public void changeProfileUrl(String profileUrl) {
+        this.profileUrl = profileUrl;
+    }
+
+    public void changePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void changeBirthDate(String birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public void changeRegion(String region) {
+        this.region = region;
+    }
+
+    public void changeManner(Double manner) {
+        this.manner = manner;
+    }
 }
