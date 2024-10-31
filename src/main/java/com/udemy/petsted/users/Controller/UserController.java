@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,7 +63,7 @@ public class UserController {
     }
 
     @GetMapping("/{nickname}")
-    public ResponseEntity<ApiResponse<UserResponseDto>> getUserByNickname(
+    public ResponseEntity<ApiResponse<UserResponseDto>> getUser(
         @PathVariable String nickname,
         @AuthenticationPrincipal UserDetails currentUser) {
         try {
@@ -104,16 +105,27 @@ public class UserController {
     }
 
     @PutMapping("/{nickname}")
-    public ResponseEntity<ApiResponse<UserResponseDto>> updateUserByNickname(
+    public ResponseEntity<ApiResponse<UserResponseDto>> updateUser(
         @PathVariable String nickname,
-        @RequestBody UserUpdateRequestDto requestDto) {
+        @RequestBody UserUpdateRequestDto requestDto,
+        @AuthenticationPrincipal UserDetails currentUser) {
         try {
             User updatedUser = userService.updateUserByNickname(nickname, requestDto);
             UserResponseDto userResponseDto = new UserResponseDto(updatedUser, true);
 
+            if (currentUser == null || !currentUser.getUsername().equals(nickname)) {
+                ApiResponse<UserResponseDto> response = new ApiResponse<>(
+                    "error",
+                    "수정 권한이 없습니다.",
+                    null
+                );
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            }
+
+
             ApiResponse<UserResponseDto> response = new ApiResponse<>(
                 "success",
-                "User updated successfully",
+                "사용자 정보가 성공적으로 수정되었습니다.",
                 userResponseDto
             );
             return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -129,6 +141,46 @@ public class UserController {
             ApiResponse<UserResponseDto> response = new ApiResponse<>(
                 "error",
                 "해당 사용자를 찾을 수 없습니다.",
+                null
+            );
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+    }
+
+    @DeleteMapping("/{nickname}")
+    public ResponseEntity<ApiResponse<UserResponseDto>> deleteUser(
+        @PathVariable String nickname,
+        @AuthenticationPrincipal UserDetails currentUser) {
+
+        if (currentUser == null) {
+            ApiResponse<UserResponseDto> response = new ApiResponse<>(
+                "error",
+                "인증이 필요합니다.",
+                null
+            );
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+
+        if (!currentUser.getUsername().equals(nickname)) {
+            ApiResponse<UserResponseDto> response = new ApiResponse<>(
+                "error",
+                "삭제 권한이 없습니다.",
+                null
+            );
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
+        try {
+            userService.deleteUserByNickname(nickname);
+            ApiResponse<UserResponseDto> response = new ApiResponse<>(
+                "success",
+                "사용자 계정이 성공적으로 삭제되었습니다.",
+                null
+            );
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+        } catch (RuntimeException e) {
+            ApiResponse<UserResponseDto> response = new ApiResponse<>(
+                "error",
+                "이메일 형식 또는 전화번호 형식이 올바르지 않습니다.",
                 null
             );
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);

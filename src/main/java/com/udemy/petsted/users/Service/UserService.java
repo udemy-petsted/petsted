@@ -7,6 +7,7 @@ import com.udemy.petsted.users.dto.UserUpdateRequestDto;
 import java.util.Date;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
@@ -38,13 +39,13 @@ public class UserService {
     }
 
     public User updateUserByNickname(String nickname, UserUpdateRequestDto requestDto) {
-        Optional<User> OptionalUser = userRepository.findByNickname(nickname);
+        Optional<User> optionalUser = userRepository.findByNickname(nickname);
 
-        if (OptionalUser.isEmpty()) {
+        if (optionalUser.isEmpty()) {
             throw new RuntimeException("해당 사용자를 찾을 수 없습니다");
         }
 
-        User user = OptionalUser.get();
+        User user = optionalUser.get();
 
         User updatedUser = user.toBuilder()
             .nickname(requestDto.getNickname() != null ? requestDto.getNickname() : user.getNickname())
@@ -57,6 +58,20 @@ public class UserService {
             .build();
 
         return userRepository.save(updatedUser);
+    }
+
+    @Transactional
+    public User deleteUserByNickname(String nickname){
+        Optional<User> optionalUser = userRepository.findByNickname(nickname);
+
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("해당 사용자를 찾을 수 없습니다");
+        }
+
+        User user = optionalUser.get();
+        userRepository.delete(user);
+
+        return user;
     }
 
     public User findByNickname(String nickname){
