@@ -21,6 +21,22 @@ public class UserResponseDto {
     private Date createdAt;
     private Date updatedAt;
 
+    public UserResponseDto(User user) {
+        this.userId = user.getUserId();
+        this.nickname = user.getNickname();
+        this.username = user.getUsername();
+        this.hasPet = user.isHasPet();
+        this.profileUrl = user.getProfileUrl();
+        this.phoneNumber = user.getPhoneNumber();
+        this.region = user.getRegion();
+        this.manner = user.getManner();
+        this.createdAt = user.getCreated_at();
+        this.updatedAt = user.getUpdated_at();
+        this.email = user.getEmail();
+        this.phoneNumber = user.getPhoneNumber();
+        this.birthDate = user.getBirthDate();
+    }
+
     public UserResponseDto(User user, boolean isOwner) {
         this.userId = user.getUserId();
         this.nickname = user.getNickname();

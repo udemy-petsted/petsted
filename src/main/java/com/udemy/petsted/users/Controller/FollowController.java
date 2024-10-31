@@ -26,17 +26,25 @@ public class FollowController {
     private UserService userService;
 
     @PostMapping("/{targetNickname}")
-    public ResponseEntity<ApiResponse> followUser(
+    public ResponseEntity<ApiResponse<UserResponseDto>> followUser(
         @PathVariable String nickname,
         @PathVariable String targetNickname,
         @AuthenticationPrincipal UserDetails currentUser) {
 
-        followService.followUser(nickname, targetNickname);
+        if (currentUser == null || !currentUser.getUsername().equals(nickname)) {
+            ApiResponse<UserResponseDto> response = new ApiResponse<>(
+                "error",
+                "수정 권한이 없습니다.",
+                null
+            );
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
 
         try {
             User user = userService.findByNickname(nickname);
+            User targetUser = userService.findByNickname(targetNickname);
 
-            if(user == null) {
+            if(user == null || targetUser == null) {
                 ApiResponse<UserResponseDto> response = new ApiResponse<>(
                     "error",
                     "해당 사용자를 찾을 수 없습니다.",
@@ -45,13 +53,26 @@ public class FollowController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
 
+            boolean alreadyFollowing = followService.isAlreadyFollowing(user, targetUser);
+            if (alreadyFollowing) {
+                ApiResponse<UserResponseDto> response = new ApiResponse<>(
+                    "error",
+                    "이미 팔로우 중인 사용자입니다.",
+                    null
+                );
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+
+            Long followId = followService.followUser(user, targetUser);
+
+            UserResponseDto userResponseDto = new UserResponseDto(user);
             ApiResponse<UserResponseDto> response = new ApiResponse<>(
                 "success",
                 "유저 팔로우가 완료되었습니다.",
-                null
+                userResponseDto
             );
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
