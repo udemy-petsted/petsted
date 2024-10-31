@@ -3,7 +3,7 @@ package com.udemy.petsted.auth.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.udemy.petsted.auth.entity.User;
-import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -19,59 +19,73 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 //@Transactional(propagation = Propagation.NOT_SUPPORTED)
 class UserRepositoryTest {
 
-    // user.sql 때문에 데이터가 실행시 먼저 모두 1씩 증가해있다
-    private final int SIZE = 101;
-    private final Long USER_ID = 2L;
-
     @Autowired
     private UserRepository userRepository;
 
     @Test
-    public void testInsert() {
-        User user = User.builder()
-            .nickname("test")
-            .username("test")
+    @DisplayName("사용자를 저장하고 저장된 사용자를 조회하여 동일한지 확인한다.")
+    public void testInsertAndFind() {
+        int num = 1;
+        User user = createUser(num);
+        User notSavedUser = createUser(num + 1);
+        userRepository.save(user);
+        User savedUser = userRepository.findById(user.getId()).orElse(null);
+
+        // usingRecursiveComparison() : 객체 전체의 모든 필드를 재귀적으로 비교한다.
+        assertThat(user).usingRecursiveComparison().isEqualTo(savedUser);
+        assertThat(user).usingRecursiveComparison().isNotEqualTo(notSavedUser);
+    }
+
+    @Test
+    @DisplayName("여러 사용자를 저장하고 동일한 숫자의 사용자가 저장되었는지 확인한다.")
+    public void testInsertDummies() {
+        // 자동으로 실행되는 SQL 문 때문에 생기는 데이터를 제거한다.
+        userRepository.deleteAll();
+        
+        int size = 100;
+        for (int i = 0; i < size; i++) {
+            User user = createUser(i);
+            userRepository.save(user);
+        }
+        assertThat(userRepository.findAll().size()).isEqualTo(size);
+    }
+
+    @Test
+    @DisplayName("영속성 컨테이너 내부에 들어있는 객체 업데이트 시 자동으로 DB에"
+        + "반영되는지 확인한다.")
+    public void testUpdateDirtyCheck() {
+        int num = 1;
+        String newNickname = "newNickname";
+
+        User user = createUser(num);
+        userRepository.save(user);
+
+        user.changeNickname(newNickname);
+        User savedUser = userRepository.findById(user.getId()).orElse(null);
+
+        assertThat(savedUser)
+            .extracting(User::getNickname)
+            .isEqualTo(newNickname);
+    }
+
+    /**
+     * num으로 고유성을 가진다
+     *
+     * @param num 고유 번호
+     * @return user
+     */
+    private User createUser(int num) {
+        return User.builder()
+            .nickname("test" + num)
+            .username("test" + num)
             .password("test")
-            .email("test")
+            .email("test" + num)
             .hasPet(false)
             .profileUrl("test")
-            .phoneNumber("test")
+            .phoneNumber("test" + num)
             .birthDate("test")
             .region("test")
             .manner(0.0)
             .build();
-        userRepository.save(user);
-        System.out.println("user.getId() = " + user.getId());
-        System.out.println(userRepository.findAll().get(0));
-        assertThat(user.getId()).isNotNull();
-    }
-
-    @Test
-    public void testInsertDummies() {
-
-        for (int i = 0; i < 100; i++) {
-            User user = User.builder()
-                .nickname("test" + i)
-                .username("test" + i)
-                .password("test" + i)
-                .email("test" + i)
-                .hasPet(false)
-                .profileUrl("test" + i)
-                .phoneNumber("test" + i)
-                .birthDate("test" + i)
-                .region("test" + i)
-                .manner(0.0)
-                .build();
-            userRepository.save(user);
-        }
-
-        assertThat(userRepository.findAll().size()).isEqualTo(SIZE);
-    }
-
-    @Test
-    public void testRead() {
-        testInsert();
-        Optional<User> result = userRepository.findById(USER_ID);
-        assertThat(result.isPresent()).isTrue();
     }
 }
