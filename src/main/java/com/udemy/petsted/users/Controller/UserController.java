@@ -6,6 +6,7 @@ import com.udemy.petsted.users.Entity.User;
 import com.udemy.petsted.users.Service.UserService;
 import com.udemy.petsted.users.dto.UserCreateRequestDto;
 import com.udemy.petsted.users.dto.UserResponseDto;
+import com.udemy.petsted.users.dto.UserUpdateRequestDto;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -17,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -98,6 +100,38 @@ public class UserController {
                 null
             );
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+    }
+
+    @PutMapping("/{nickname}")
+    public ResponseEntity<ApiResponse<UserResponseDto>> updateUserByNickname(
+        @PathVariable String nickname,
+        @RequestBody UserUpdateRequestDto requestDto) {
+        try {
+            User updatedUser = userService.updateUserByNickname(nickname, requestDto);
+            UserResponseDto userResponseDto = new UserResponseDto(updatedUser, true);
+
+            ApiResponse<UserResponseDto> response = new ApiResponse<>(
+                "success",
+                "User updated successfully",
+                userResponseDto
+            );
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (IllegalArgumentException e) {
+            ApiResponse<UserResponseDto> response = new ApiResponse<>(
+                "error",
+                "이메일 형식 또는 전화번호 형식이 올바르지 않습니다.",
+                null
+            );
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        catch (RuntimeException e) {
+            ApiResponse<UserResponseDto> response = new ApiResponse<>(
+                "error",
+                "해당 사용자를 찾을 수 없습니다.",
+                null
+            );
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
 }

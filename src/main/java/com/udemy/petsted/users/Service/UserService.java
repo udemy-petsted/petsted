@@ -3,6 +3,7 @@ package com.udemy.petsted.users.Service;
 import com.udemy.petsted.users.Entity.User;
 import com.udemy.petsted.users.Repository.UserRepository;
 import com.udemy.petsted.users.dto.UserCreateRequestDto;
+import com.udemy.petsted.users.dto.UserUpdateRequestDto;
 import java.util.Date;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,29 @@ public class UserService {
         // 유저 정보 저장
         return userRepository.save(newUser);
     }
+
+    public User updateUserByNickname(String nickname, UserUpdateRequestDto requestDto) {
+        Optional<User> OptionalUser = userRepository.findByNickname(nickname);
+
+        if (OptionalUser.isEmpty()) {
+            throw new RuntimeException("해당 사용자를 찾을 수 없습니다");
+        }
+
+        User user = OptionalUser.get();
+
+        User updatedUser = user.toBuilder()
+            .nickname(requestDto.getNickname() != null ? requestDto.getNickname() : user.getNickname())
+            .email(requestDto.getEmail() != null ? requestDto.getEmail() : user.getEmail())
+            .phoneNumber(requestDto.getPhoneNumber() != null ? requestDto.getPhoneNumber() : user.getPhoneNumber())
+            .profileUrl(requestDto.getProfileUrl() != null ? requestDto.getProfileUrl() : user.getProfileUrl())
+            .birthDate(requestDto.getBirthDate() != null ? requestDto.getBirthDate() : user.getBirthDate())
+            .region(requestDto.getRegion() != null ? requestDto.getRegion() : user.getRegion())
+            .hasPet(requestDto.getHasPet() != null ? requestDto.getHasPet() : user.isHasPet())
+            .build();
+
+        return userRepository.save(updatedUser);
+    }
+
     public User findByNickname(String nickname){
         Optional<User> user = userRepository.findByNickname(nickname);
 
