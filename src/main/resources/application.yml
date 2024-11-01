@@ -25,4 +25,5 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
   sql:
     init:
-      data-locations: classpath:/SQL/users.sql
+#      100개의 더미데이터가 필요해 sql을 주석처리
+#      data-locations: classpath:/SQL/users.sql
