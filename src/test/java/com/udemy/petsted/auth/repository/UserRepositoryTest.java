@@ -3,11 +3,18 @@ package com.udemy.petsted.auth.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.udemy.petsted.auth.entity.User;
+import com.udemy.petsted.config.DummyUserDataList;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @DataJpaTest
 // 인메모리 데이터 베이스가 아닌 외부 데이터베이스 (mysql)을 사용할 때 필요한 어노테이션
@@ -21,6 +28,11 @@ class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @BeforeEach
+    public void setUp() {
+        userRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("사용자를 저장하고 저장된 사용자를 조회하여 동일한지 확인한다.")
@@ -41,7 +53,7 @@ class UserRepositoryTest {
     public void testInsertDummies() {
         // 자동으로 실행되는 SQL 문 때문에 생기는 데이터를 제거한다.
         userRepository.deleteAll();
-        
+
         int size = 100;
         for (int i = 0; i < size; i++) {
             User user = createUser(i);
@@ -77,6 +89,33 @@ class UserRepositoryTest {
 
         userRepository.delete(user);
         assertThat(userRepository.findById(savedId)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("페이징 처리가 정상적으로 작동하는지 확인한다.")
+    public void testPaging() {
+        // Given: 더미데이터 생성
+        userRepository.saveAll(DummyUserDataList.create(100));
+
+        // When: 페이징 요청 설정
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id")
+            .descending());
+        Page<User> result = userRepository.findAll(pageable);
+
+        // Then: 페이징 결과 검증
+        //  페이지 사이즈가 10인지 확인
+        assertThat(result.getSize()).isEqualTo(10);
+        // 요청한 페이지 번호가 0인지 확인
+        assertThat(result.getNumber()).isEqualTo(0);
+        // 전체 페이지 수가 예상대로 10인지 확인 ( 100개 / 페이지당 10개)
+        assertThat(result.getTotalPages()).isEqualTo(10);
+        // 전체 항목 수가 100개인지 확인
+        assertThat(result.getTotalElements()).isEqualTo(100);
+
+        // 첫번째 페이지의 첫번째 항목의 id가 내림차순 정렬에 맞게 두 번째 항목의 id보다 큰지 확인
+        assertThat(result.getContent().get(0).getId())
+            .isGreaterThan(result.getContent().get(1).getId());
+
     }
 
     /**
