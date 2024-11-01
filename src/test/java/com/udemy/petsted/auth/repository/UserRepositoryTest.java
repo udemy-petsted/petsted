@@ -68,6 +68,17 @@ class UserRepositoryTest {
             .isEqualTo(newNickname);
     }
 
+    @Test
+    @DisplayName("사용자가 정상적으로 제거되었는지 확인한다.")
+    public void testDelete() {
+        int num = 1;
+        User user = createUser(num);
+        Long savedId = userRepository.save(user).getId();
+
+        userRepository.delete(user);
+        assertThat(userRepository.findById(savedId)).isEmpty();
+    }
+
     /**
      * num으로 고유성을 가진다
      *
