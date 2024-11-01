@@ -40,7 +40,7 @@ public class User {
     @Column(nullable = false, length = 250)
     private String password;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(nullable = false, unique = true, length = 40)
     private String email;
 
     @Column(nullable = false)
@@ -55,7 +55,7 @@ public class User {
     @Column(nullable = false, length = 20)
     private String birthDate;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 100)
     private String region;
 
     @Column(nullable = false)
