@@ -10,10 +10,10 @@ import org.springframework.context.annotation.Configuration;
 public class DataLoader {
 
     @Bean
-    public CommandLineRunner loadData(UserRepository userRepository,
-        DummyUserDataList dummyUserDataList) {
+    public CommandLineRunner loadData(UserRepository userRepository
+        ) {
         return args -> {
-            userRepository.saveAll(dummyUserDataList.create(100));
+            userRepository.saveAll(DummyUserDataList.create(100));
         };
     }
 }

@@ -6,12 +6,11 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import net.datafaker.Faker;
-import org.springframework.stereotype.Component;
 
-@Component
+
 public class DummyUserDataList {
 
-    public List<User> create(int count) {
+    public static List<User> create(int count) {
         Faker faker = new Faker();
 
         return IntStream.range(0, count)
