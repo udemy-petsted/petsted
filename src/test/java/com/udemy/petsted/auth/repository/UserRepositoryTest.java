@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.udemy.petsted.auth.entity.User;
 import com.udemy.petsted.config.DummyUserDataList;
-import java.util.List;
+import com.udemy.petsted.util.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,8 +38,8 @@ class UserRepositoryTest {
     @DisplayName("사용자를 저장하고 저장된 사용자를 조회하여 동일한지 확인한다.")
     public void testInsertAndFind() {
         int num = 1;
-        User user = createUser(num);
-        User notSavedUser = createUser(num + 1);
+        User user = TestUtils.createUser(num);
+        User notSavedUser = TestUtils.createUser(num + 1);
         userRepository.save(user);
         User savedUser = userRepository.findById(user.getId()).orElse(null);
 
@@ -56,7 +56,7 @@ class UserRepositoryTest {
 
         int size = 100;
         for (int i = 0; i < size; i++) {
-            User user = createUser(i);
+            User user = TestUtils.createUser(i);
             userRepository.save(user);
         }
         assertThat(userRepository.findAll().size()).isEqualTo(size);
@@ -69,7 +69,7 @@ class UserRepositoryTest {
         int num = 1;
         String newNickname = "newNickname";
 
-        User user = createUser(num);
+        User user = TestUtils.createUser(num);
         userRepository.save(user);
 
         user.changeNickname(newNickname);
@@ -84,7 +84,7 @@ class UserRepositoryTest {
     @DisplayName("사용자가 정상적으로 제거되었는지 확인한다.")
     public void testDelete() {
         int num = 1;
-        User user = createUser(num);
+        User user = TestUtils.createUser(num);
         Long savedId = userRepository.save(user).getId();
 
         userRepository.delete(user);
@@ -116,28 +116,6 @@ class UserRepositoryTest {
         assertThat(result.getContent().get(0).getId())
             .isGreaterThan(result.getContent().get(1).getId());
 
-    }
-
-    /**
-     * num으로 고유성을 가진다
-     *
-     * @param num 고유 번호
-     * @return user
-     */
-    private User createUser(int num) {
-        return User.builder()
-            .nickname("test" + num)
-            .username("test" + num)
-            .password("test")
-            .email("test" + num)
-            .hasPet(false)
-            .profileUrl("test")
-            .phoneNumber("test" + num)
-            .birthDate("test")
-            .region("test")
-            .manner(0.0)
-            .role("USER")
-            .build();
     }
 
 }
