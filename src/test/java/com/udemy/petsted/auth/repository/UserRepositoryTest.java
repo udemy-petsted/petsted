@@ -136,6 +136,8 @@ class UserRepositoryTest {
             .birthDate("test")
             .region("test")
             .manner(0.0)
+            .role("USER")
             .build();
     }
+
 }

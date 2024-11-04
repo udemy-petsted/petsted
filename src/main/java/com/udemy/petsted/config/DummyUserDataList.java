@@ -27,6 +27,7 @@ public class DummyUserDataList {
                     .region(faker.address().country())
                     // 소수점 두 자리에서 반올림한다
                     .manner(Math.round(faker.random().nextDouble(0.0, 99.9) * 10) / 10.0)
+                    .role("USER")
                     .build()
             ).toList();
 
