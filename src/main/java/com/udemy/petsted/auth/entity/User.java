@@ -69,6 +69,9 @@ public class User {
     @LastModifiedDate
     private LocalDateTime updatedDate;
 
+    @Column(nullable = false, length = 10)
+    private String role;
+
     public void changeNickname(String nickname) {
         this.nickname = nickname;
     }
@@ -104,4 +107,9 @@ public class User {
     public void changeManner(Double manner) {
         this.manner = manner;
     }
+
+    public void changeRole(String role) {
+        this.role = role;
+    }
+
 }
