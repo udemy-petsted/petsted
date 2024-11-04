@@ -1,7 +1,7 @@
 package com.udemy.petsted.comment.entity;
 
 import com.udemy.petsted.comment.dto.request.CommentCreateRequestDto;
-import com.udemy.petsted.comment.dto.response.CommentCreateResponseDto;
+import com.udemy.petsted.comment.dto.request.CommentUpdateRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -51,10 +51,8 @@ public class CommentEntity {
             .build();
     }
 
-    public CommentCreateResponseDto toCreateResponseDto() {
-        return CommentCreateResponseDto.builder()
-            .commentId(this.id)
-            .createdAt(this.createdAt)
-            .build();
+    public void modify(CommentUpdateRequestDto updateRequestDto) {
+        this.content = updateRequestDto.getContent();
+        this.updatedAt = LocalDate.now();
     }
 }
